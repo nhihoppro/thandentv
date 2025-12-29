@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thần Đèn TV - Online Radio</title>
+    <title>Thần Đèn TV - Online Suno Radio</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
         :root {
             --spotify-green: #1DB954;
             --bg-black: #000000;
-            --card-bg: #121212;
             --sidebar-bg: #0d0d0d;
             --text-main: #FFFFFF;
             --text-sub: #B3B3B3;
@@ -18,55 +17,32 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-black); color: var(--text-main); height: 100vh; width: 100vw; overflow: hidden; }
-
         .main-layout { display: flex; width: 100%; height: 100vh; position: relative; }
 
         /* --- PLAYER SECTION --- */
-        .player-section { 
-            flex: 1; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; 
-            background: linear-gradient(180deg, #181818 0%, #000000 100%); position: relative; 
-        }
-
-        .live-badge {
-            position: absolute; top: 20px; left: 20px; background: #ff4b2b; color: white;
-            padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold;
-            display: flex; align-items: center; gap: 6px; z-index: 100;
-        }
+        .player-section { flex: 1; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; background: linear-gradient(180deg, #181818 0%, #000000 100%); position: relative; }
+        
+        .live-badge { position: absolute; top: 20px; left: 20px; background: #ff4b2b; color: white; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; z-index: 100; }
         .live-dot { width: 8px; height: 8px; background: white; border-radius: 50%; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .media-display { 
-            width: 100%; flex: 1; margin-bottom: 20px; background: #000; border-radius: 12px; 
-            overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; 
-        }
-
+        .media-display { width: 100%; flex: 1; margin-bottom: 20px; background: #000; border-radius: 12px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; }
         #albumArtFull { width: 100%; height: 100%; object-fit: cover; position: absolute; display: none; z-index: 1; }
         #mainVideo { width: 100%; height: 100%; display: none; object-fit: contain; z-index: 2; }
-
         .disc-wrapper { width: 220px; height: 220px; position: relative; z-index: 3; }
         .disc { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #181818; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
 
-        #overlayLogo {
-            position: absolute; z-index: 10; animation: rotateDisc 15s linear infinite; animation-play-state: paused;
-            transition: all 0.4s ease;
-        }
+        #overlayLogo { position: absolute; z-index: 10; animation: rotateDisc 15s linear infinite; animation-play-state: paused; transition: all 0.4s ease; }
         .playing #overlayLogo { animation-play-state: running; }
         .mode-audio #overlayLogo { width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; }
-        .mode-video #overlayLogo, .mode-audio.has-art #overlayLogo {
-            width: 50px; height: 50px; top: 15px; right: 15px; left: auto;
-            border: 2px solid var(--spotify-green); border-radius: 50%; background: rgba(0,0,0,0.8);
-        }
-
-        #fsBtn {
-            position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.8);
-            color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; 
-            cursor: pointer; display: none; z-index: 999;
-        }
+        .mode-video #overlayLogo, .mode-audio.has-art #overlayLogo { width: 50px; height: 50px; top: 15px; right: 15px; left: auto; border: 2px solid var(--spotify-green); border-radius: 50%; background: rgba(0,0,0,0.8); }
 
         #visualizer { width: 100%; height: 40px; margin-bottom: 10px; }
         .track-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .track-text h2 { font-size: 22px; font-weight: 700; }
-        .add-btn { width: 40px; height: 40px; border: 1.5px solid var(--text-sub); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; color: white; background: none; }
+
+        .add-btn { width: 40px; height: 40px; border: 1.5px solid var(--text-sub); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; color: white; background: none; transition: 0.2s; margin-left: 10px; }
+        .add-btn:hover { border-color: var(--spotify-green); background: rgba(29, 185, 84, 0.1); }
 
         .progress-container { width: 100%; padding: 10px 0; cursor: pointer; }
         .progress-bg { height: 6px; background: #333; border-radius: 3px; position: relative; }
@@ -76,26 +52,13 @@
         .controls { display: flex; align-items: center; gap: 30px; margin-bottom: 10px; }
         .play-btn-main { width: 56px; height: 56px; background: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #000; cursor: pointer; transition: 0.2s; }
 
-        /* --- PLAYLIST FIX LỖI ẨN HIỆN --- */
-        .playlist-section { 
-            position: fixed; right: -320px; top: 0; width: 320px; height: 100vh;
-            background-color: var(--sidebar-bg); padding: 20px; display: flex; flex-direction: column; 
-            z-index: 2000; transition: right 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.8); border-left: 1px solid #222;
-        }
-
-        /* Vùng cảm ứng hiện Playlist (Có vệt xanh mờ để Hợp dễ nhận biết) */
-        .edge-trigger { 
-            position: fixed; right: 0; top: 0; width: 15px; height: 100vh; 
-            z-index: 1500; background: rgba(29, 185, 84, 0.05); cursor: pointer;
-        }
-
-        /* Hiệu ứng khi lướt chuột qua */
+        /* --- PLAYLIST SECTION --- */
+        .playlist-section { position: fixed; right: -320px; top: 0; width: 320px; height: 100vh; background-color: var(--sidebar-bg); padding: 20px; display: flex; flex-direction: column; z-index: 2000; transition: right 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.8); border-left: 1px solid #222; }
+        .edge-trigger { position: fixed; right: 0; top: 0; width: 15px; height: 100vh; z-index: 1500; background: transparent; cursor: pointer; }
         .edge-trigger:hover ~ .playlist-section, .playlist-section:hover { right: 0; }
 
         .playlist-title { font-size: 13px; font-weight: 700; margin-bottom: 20px; color: var(--spotify-green); border-bottom: 1px solid #222; padding-bottom: 10px; }
         .song-list { flex: 1; overflow-y: auto; }
-
-        /* SỬA LỖI LẶP TÊN */
         .song-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; color: var(--text-main); overflow: hidden; }
         .song-item:hover { background: var(--hover-bg); }
         .song-item.active { background: #1a1a1a; color: var(--spotify-green); font-weight: bold; }
@@ -112,8 +75,7 @@
 <body>
 
 <div class="main-layout" id="playerApp">
-    <div class="live-badge"><div class="live-dot"></div>RADIO ONLINE</div>
-    
+    <div class="live-badge"><div class="live-dot"></div>SUNO RADIO LIVE</div>
     <div class="edge-trigger"></div>
 
     <div class="player-section">
@@ -125,25 +87,34 @@
                 </div>
             </div>
             <video id="mainVideo" crossorigin="anonymous" ondblclick="toggleFullscreen()"></video>
-            <button id="fsBtn" onclick="toggleFullscreen()">
+            <button id="fsBtn" style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.8); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; cursor: pointer; display: none; z-index: 999;" onclick="toggleFullscreen()">
                 <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
             </button>
         </div>
+        
         <canvas id="visualizer"></canvas>
+        
         <div class="track-header">
             <div class="track-text">
                 <h2 id="songTitle">Thần Đèn TV Radio</h2>
-                <p id="subTitle">Di chuyển chuột sát cạnh phải để hiện Danh sách</p>
+                <p id="subTitle">Hệ thống phát nhạc Online trực tiếp từ Link</p>
             </div>
-            <button class="add-btn" onclick="document.getElementById('fileInput').click()">
-                <svg width="22" height="22" fill="white" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            </button>
+            <div style="display: flex;">
+                <button class="add-btn" title="Thêm file từ máy" onclick="checkOwnerPermission('file')">
+                    <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                </button>
+                <button class="add-btn" title="Thêm Link Online (Suno...)" onclick="checkOwnerPermission('link')">
+                    <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                </button>
+            </div>
             <input type="file" id="fileInput" accept="audio/*,video/*" multiple style="display:none">
         </div>
+
         <div class="progress-container" id="progressContainer">
             <div class="progress-bg"><div class="progress-fill" id="progressBar"></div></div>
             <div class="time-box"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
         </div>
+
         <div class="controls">
             <button class="add-btn" style="border:none" onclick="toggleShuffle()"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
             <button class="add-btn" style="border:none" onclick="prevMedia()"><svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
@@ -155,25 +126,46 @@
             <button class="add-btn" style="border:none" onclick="toggleRepeat()"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
         </div>
     </div>
-
+    
     <div class="playlist-section">
-        <div class="playlist-title">DANH SÁCH PHÁT (<span id="count">0</span>)</div>
+        <div class="playlist-title">RADIO PLAYLIST (<span id="count">0</span>)</div>
         <div class="song-list" id="playlist"></div>
     </div>
 </div>
 
 <script>
+    const MY_PASSWORD = "hop"; // Mật khẩu của Hợp
+
     const media = document.getElementById('mainVideo');
     const displayArea = document.getElementById('displayArea');
     const playlistBox = document.getElementById('playlist');
     const fileInput = document.getElementById('fileInput');
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
-    const fsBtn = document.getElementById('fsBtn');
     
     let playlist = [];
     let currentIndex = 0;
     let isShuffle = false, isRepeat = false, isDragging = false;
+
+    // KIỂM TRA QUYỀN TRƯỚC KHI THÊM
+    function checkOwnerPermission(type) {
+        const pass = prompt("Nhập mật khẩu chủ phòng Radio:");
+        if (pass === MY_PASSWORD) {
+            if (type === 'file') {
+                fileInput.click();
+            } else {
+                const url = prompt("Dán link nhạc Online (Suno, v.v...) vào đây:");
+                if (url) {
+                    const name = prompt("Đặt tên cho bài hát này:", "Nhạc Online Suno");
+                    playlist.push({ name: name || "Link Online", type: 'audio', url: url, isOnline: true });
+                    renderPlaylist();
+                    if (playlist.length === 1) loadMedia(0);
+                }
+            }
+        } else {
+            alert("Sai mật khẩu!");
+        }
+    }
 
     function toggleFullscreen() {
         if (!media.src) return;
@@ -200,9 +192,8 @@
 
     fileInput.onchange = (e) => {
         const files = Array.from(e.target.files);
-        if (files.length === 0) return;
         files.forEach(f => {
-            playlist.push({ name: f.name, type: f.type.split('/')[0], url: URL.createObjectURL(f), raw: f });
+            playlist.push({ name: f.name, type: f.type.split('/')[0], url: URL.createObjectURL(f), raw: f, isOnline: false });
         });
         renderPlaylist();
         if (playlist.length === files.length) loadMedia(0);
@@ -214,18 +205,17 @@
         const item = playlist[index];
         media.src = item.url;
         document.getElementById('songTitle').innerText = item.name.replace(/\.[^/.]+$/, "");
-        
         displayArea.className = 'media-display mode-audio';
         document.getElementById('albumArtFull').style.display = 'none';
         media.style.display = 'none';
         document.getElementById('discArea').style.display = 'block';
-        fsBtn.style.display = 'block'; // Luôn hiện nút khi có file
+        document.getElementById('fsBtn').style.display = 'block';
 
         if (item.type === 'video') {
             displayArea.classList.add('mode-video');
             media.style.display = 'block';
             document.getElementById('discArea').style.display = 'none';
-        } else {
+        } else if (!item.isOnline) {
             jsmediatags.read(item.raw, {
                 onSuccess: (tag) => {
                     const pic = tag.tags.picture;
@@ -252,13 +242,7 @@
         document.getElementById('pauseIcon').style.display = media.paused ? 'none' : 'block';
     }
 
-    media.onended = () => {
-        if (isRepeat) loadMedia(currentIndex); 
-        else if (isShuffle) loadMedia(Math.floor(Math.random() * playlist.length)); 
-        else nextMedia();
-        media.play();
-    };
-
+    media.onended = () => { if (isRepeat) loadMedia(currentIndex); else if (isShuffle) loadMedia(Math.floor(Math.random() * playlist.length)); else nextMedia(); media.play(); };
     function nextMedia() { if(playlist.length === 0) return; currentIndex = (currentIndex + 1) % playlist.length; loadMedia(currentIndex); media.play(); }
     function prevMedia() { if(playlist.length === 0) return; currentIndex = (currentIndex - 1 + playlist.length) % playlist.length; loadMedia(currentIndex); media.play(); }
 
@@ -267,9 +251,7 @@
         playlistBox.innerHTML = playlist.map((item, i) => `
             <div class="song-item ${i === currentIndex ? 'active' : ''}" onclick="loadMedia(${i}); togglePlay();">
                 <span style="opacity:0.4; width:15px">${i + 1}</span>
-                <div class="song-name-box">
-                    <span class="song-name">${item.name}</span>
-                </div>
+                <div class="song-name-box"><span class="song-name">${item.name} ${item.isOnline ? '(Online)' : ''}</span></div>
             </div>`).join('');
     }
 
